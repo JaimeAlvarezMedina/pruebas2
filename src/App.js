@@ -1,35 +1,45 @@
 import './App.css';
 import imagen_perfil from './Imagenes/avatar-1-48.png';
-import ReactDOM from 'react-dom';
-
+import like from './Imagenes/like.png';
+import lupa from './Imagenes/lupa.png';
 import React from 'react';
 function Perfil(props) {
     localStorage.setItem("tipo", props.id);
-
-    if (Boolean(localStorage.getItem("usuario")) == false) {
-        return (
-            <ul className="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuDark">
-                <li><a className="dropdown-item" href="/login">Iniciar sesión</a></li>
-            </ul>
-        )
-    }
-    else {
+    localStorage.setItem("nombre_usuario", props.algo);
+    if (Boolean(localStorage.getItem("usuario")) == true) {
         if (props.id == "cliente") {
             return (
-                <ul className="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuDark">
-                    <li><a className="dropdown-item" href="#">Mi perfil</a></li>
-                    <li><a className="dropdown-item" id='cerrar_sesion'>Cerrar sesión</a></li>
-                </ul>
+                <a href="/" id='cerrar_sesion' >Logout</a>
+
             )
         }
         if (props.id == "admin") {
             return (
-                <ul className="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuDark">
-                    <li><a className="dropdown-item" id='anadir_admin'>Añadir administrador</a></li>
-                    <li><a className="dropdown-item" id='cerrar_sesion'>Cerrar sesión</a></li>
-                </ul>
+                <div>
+
+                    <a href="/anadir_admin" >Añadir administrador</a>
+                    <a href="/" id='cerrar_sesion'>Logout</a>
+                </div>
             )
         }
+        if (props.id != "admin" && props.id != "cliente") {
+            return (
+                <a href="/login" >Login</a>
+            )
+        }
+    }
+    else {
+        return (
+            <a href="/login" >Login</a>
+        )
+    }
+}
+
+function Mi_perfil(props) {
+    if (props.id == "cliente") {
+        return (
+            <a href="/Perfil" id="mi_perfil">Mi perfil</a>
+        )
     }
 }
 
@@ -40,6 +50,8 @@ function Boton(props) {
         )
     }
 }
+
+
 var seleccionado;
 class Foro extends React.Component {
 
@@ -55,13 +67,17 @@ class Foro extends React.Component {
         this.insertar = this.insertar.bind(this);
         this.openNav = this.openNav.bind(this);
         this.closeNav = this.closeNav.bind(this);
-        this.anadir_admin = this.ir_anadir_admin.bind(this);
+        this.barra_busqueda = this.barra_de_busqueda.bind(this);
+        
         this.coger_usuario = this.coger_datos_usuario.bind(this);
         this.funcion = this.añadir_funcion.bind(this);
         this.f = this.funciones.bind(this);
         this.borrar = this.borrar_publicacion.bind(this);
-        this.preview=this.preview_perfil.bind(this) ;
-        this.perfil=this.perfil_usuario.bind(this) ;
+        this.preview = this.preview_perfil.bind(this);
+        this.perfil = this.perfil_usuario.bind(this);
+        this.mi_perfil = this.mi_perfil_dentro.bind(this);
+
+
         this.fileInput = React.createRef();
 
     }
@@ -72,6 +88,9 @@ class Foro extends React.Component {
         document.getElementById("main").style.marginLeft = "250px";
         document.getElementById("btn_dentro").style.opacity = 0;
         document.getElementById("btn_dentro").style.display = "none";
+        document.getElementById("navbar-form").style.opacity = "0";
+        document.getElementById("navbar-form").style.marginLeft = "300px";
+        document.getElementById("container").style.marginTop = "10px";
     }
     menu() {
 
@@ -87,6 +106,9 @@ class Foro extends React.Component {
 
     /* Set the width of the side navigation to 0 and the left margin of the page content to 0 */
     closeNav() {
+        document.getElementById("navbar-form").style.opacity = "1";
+        document.getElementById("container").style.marginTop = "70px";
+        document.getElementById("navbar-form").style.marginLeft = "100px";
         document.getElementById("mySidemenu").style.width = "0";
         document.getElementById("main").style.marginLeft = "0";
         document.getElementById("btn").style.height = "50px";
@@ -106,9 +128,7 @@ class Foro extends React.Component {
     ir_crear_post() {
         window.location.href = "/crear_post";
     }
-    ir_anadir_admin() {
-        window.location.href = "/anadir_admin";
-    }
+
     coger_datos_usuario() {
         var datos = new FormData();
         if (Boolean(localStorage.getItem("usuario")) == true) {
@@ -137,9 +157,38 @@ class Foro extends React.Component {
                 }
             )
     }
+    barra_de_busqueda(){
+        var busqueda=document.getElementById("barra_busqueda").value;
+        console.log(busqueda);
+        if(busqueda==false){
+            window.location.reload();
+        }else{
+        var datos = new FormData();
+
+            datos.append('barra_busqueda', busqueda);
+
+            fetch("http://localhost/php_insti/filtrar_busqueda.php", {
+                method: "POST",
+                body: datos
+            })
+                .then(res => res.json()) 
+                .then(
+                    (result) => {
+
+                        this.setState({
+                            articulo: result
+                        });
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                )
+            }
+    
+    }
     filtrado_categorias({ currentTarget }) {
 
-        console.log(seleccionado);
+        console.log(currentTarget.id);
         if (seleccionado == currentTarget.id) {
             this.noticia();
             document.getElementById(seleccionado).style.backgroundColor = '#1A565D';
@@ -176,6 +225,7 @@ class Foro extends React.Component {
                 )
         }
     }
+
     recoger_categorias() {
         var datos = new FormData();
         fetch("http://localhost/php_insti/recoger_categorias.php", {
@@ -246,15 +296,11 @@ class Foro extends React.Component {
         if (localStorage.getItem("usuario") != "") {
             var elemento_cerrar = document.getElementById("cerrar_sesion");
             elemento_cerrar.onclick = this.f;
-
-            if (localStorage.getItem("tipo") == "admin") {
-                var elemento_admin = document.getElementById("anadir_admin");
-                elemento_admin.onclick = this.anadir_admin;
-
-            }
             if (localStorage.getItem("tipo") == "cliente") {
                 var elemento_crear = document.getElementById("crear_post");
                 elemento_crear.onclick = this.crear_post;
+                var mi_perfil = document.getElementById("mi_perfil");
+                mi_perfil.onclick = this.mi_perfil;
             }
         }
     }
@@ -263,7 +309,7 @@ class Foro extends React.Component {
         this.coger_usuario();
         this.todas_categorias();
         this.coger_usuario();
-
+        console.log(localStorage.getItem("usuario"));
     }
     insertar() {
 
@@ -312,9 +358,13 @@ class Foro extends React.Component {
         elemento_padre.replaceChild(elemento_nuevo, elemento_antiguo);
 
     }
-    perfil_usuario({ currentTarget }){
+    perfil_usuario({ currentTarget }) {
         window.location.href = "/Perfil";
-        localStorage.setItem("Creador",currentTarget.id);
+        localStorage.setItem("Creador", currentTarget.id);
+    }
+    mi_perfil_dentro() {
+
+        localStorage.setItem("Creador", localStorage.getItem("nombre_usuario"));
     }
     render() {
         var admin = false;
@@ -324,41 +374,44 @@ class Foro extends React.Component {
         return (
             <div className='dashboard' onMouseEnter={this.funcion}>
                 <div id="mySidemenu" className="sidemenu">
-                    <a href="javascript:void(0)" className="cerrar" onClick={this.closeNav}>&times;</a>
-                    <img src={imagen_perfil} className="dropdown-toggle" data-bs-toggle="dropdown" ></img>
-                    {this.state.datos_usuario.map((usuario) => <Perfil id={usuario.Tipo} />)}
-                    <a href="#" >Home</a>
+                    <a className="cerrar" onClick={this.closeNav}>&times;</a>
+                    <a href="/app" >Home</a>
+                    {this.state.datos_usuario.map((comentario) => <Mi_perfil id={comentario.Tipo} onClick={this.perfil} />)}
                     <a href="#" onClick={this.menu}>Registrations</a>
                     <div id="dashboard-nav-dropdown-menu" className='dashboard-nav-dropdown-menu' style={{ display: "none" }}>
                         {this.state.categoria.map((nombre) => <a className="dashboard-nav-dropdown-item" id={nombre.Categoria} key={nombre.Categoria} onClick={this.filtrar_categoria}>{nombre.Categoria}</a>)}
 
                     </div>
 
-                    <a href="#">Reports</a>
-                    <a
-                        href="#" className="dashboard-nav-item" ><i className="fas fa-sign-out-alt"></i> Logout </a>
 
+                    <a href="#">Reports</a>
+                    {this.state.datos_usuario.map((usuario) => <Perfil id={usuario.Tipo} algo={usuario.User} />)}
                 </div>
                 <div id="main">
-                    <div className="btnclas" id="btn">
+                    <div className="btnclas fixed-top d-flex" id="btn">
+                        <button className="btn-open" id="btn_dentro" onClick={this.openNav}>&#9776; </button>
 
-                        <button className="btn-open" id="btn_dentro" onClick={this.openNav}>&#9776;</button>
+                        <form id="navbar-form" class="navbar-form  mt-2 mb-2 d-flex" role="search">
+                            <input type="text" class="form-control" id="barra_busqueda" placeholder="Search" />
+                            <a class="btn btn-secondary" onClick={this.barra_busqueda}><img class="lupa" src={lupa}></img></a>
+                        </form>
                     </div>
 
                     <div className='dashboard-app'>
                         <header className='dashboard-toolbar'><a href="#!" className="menu-toggle"><i className="fas fa-bars"></i></a></header>
-                        
+
                         <div className='dashboard-content'>
-                            <div className='container'>
-                                <div className='card'>
-                                    <div className='card-header'>
+                            <div className='container' id='container'>
+                                <div className='card '>
+                                    <div className='card-header '>
                                         <h1>Foro</h1>
+
                                         {this.state.datos_usuario.map((comentario) => <Boton id={comentario.Tipo} />)}
 
 
                                     </div>
                                     <div className='card-body'>
-                                        
+
                                         {admin
                                             ? <div>
                                                 {this.state.articulo.map((partes) => <div id='articulo_boton'><article id={partes.ID_articulo} key={partes.ID_articulo} onClick={this.coger_id}><div className="card border-success  m-4"><div className="card-body"><h5 className="card-title ">{partes.Titulo}</h5><p className="card-text">{partes.Cuerpo}</p></div></div></article>
@@ -368,7 +421,7 @@ class Foro extends React.Component {
                                             </div>
                                             : <div>
 
-                                                {this.state.articulo.map((partes) => <article id={partes.ID_articulo} key={partes.ID_articulo} ><div className="card border-success  m-4"><div className="card-body"><h5 className="card-title " id={partes.ID_articulo} key={partes.ID_articulo} onClick={this.coger_id}>{partes.Titulo}{partes.User}</h5><p id={partes.Creador}onClick={this.perfil}>Creado por:{partes.Creador}</p><p className="card-text">{partes.Cuerpo}</p></div></div></article>)}
+                                                {this.state.articulo.map((partes) => <article id={partes.ID_articulo} key={partes.ID_articulo} className="contenedor_publicacion"><div className="card_post m-4"><div className="card-body"><p id={partes.Creador} onClick={this.perfil} class="Creador_publicacion">Por:{partes.Creador}</p><h5 className="card-title text-primary" id={partes.ID_articulo} key={partes.ID_articulo} onClick={this.coger_id}>{partes.Titulo}{partes.User}</h5><p  id={partes.ID_articulo} key={partes.ID_articulo} onClick={this.coger_id} className="card-text">{partes.Cuerpo}</p><div id={partes.ID_articulo} key={partes.ID_articulo} onClick={this.coger_id} className="ttt"></div><div className="like_dislike"><button class="btn" id="green">L</button><button class="btn" id="red">D</button></div><div class="categoria_post" id={partes.Categoria} onClick={this.filtrar_categoria}>{partes.Categoria}</div></div></div></article>)}
 
                                             </div>
                                         }
