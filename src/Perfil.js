@@ -1,7 +1,5 @@
 import './App.css';
 import imagen_perfil from './Imagenes/avatar-1-48.png';
-import ReactDOM from 'react-dom';
-import editar from './Imagenes/editar.png';
 import React from 'react';
 function Perfil(props) {
     localStorage.setItem("tipo", props.id);
@@ -32,11 +30,10 @@ function Perfil(props) {
         }
     }
 }
-
-function Editar_nombre_perfil() {
-    if (localStorage.getItem("nombre_usuario") == localStorage.getItem("usuario")) {
+function Mi_perfil(props) {
+    if (props.id == "cliente") {
         return (
-            <img src={editar} id="editar_nombre" className="foto_editar"></img>
+            <a href="/Perfil" id="mi_perfil">Mi perfil</a>
         )
     }
 }
@@ -45,26 +42,21 @@ class Foro extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { value: "", articulo: [], categoria: [], imagen_prueba: '', datos_usuario: [], tipo: "", cantidad_del_post: [] };
+        this.state = {  articulo: [], categoria: [], imagen_prueba: '', datos_usuario: [], tipo: "", cantidad_del_post: [] };
         this.noticia = this.recoger_articulo.bind(this);
-        this.todas_categorias = this.recoger_categorias.bind(this);
+        // this.todas_categorias = this.recoger_categorias.bind(this);
         this.filtrar_categoria = this.filtrado_categorias.bind(this);
         this.coger_id = this.pasar_pagina.bind(this);
-        this.crear_post = this.ir_crear_post.bind(this);
-        this.imagen = this.añadir_imagen.bind(this);
-        this.insertar = this.insertar.bind(this);
         this.openNav = this.openNav.bind(this);
         this.closeNav = this.closeNav.bind(this);
         this.anadir_admin = this.ir_anadir_admin.bind(this);
         this.coger_usuario = this.coger_datos_usuario.bind(this);
-        // this.funcion = this.añadir_funcion.bind(this);
-        // this.f = this.funciones.bind(this);
-        // this.borrar = this.borrar_publicacion.bind(this);
-        this.preview = this.preview_perfil.bind(this);
+        this.funcion = this.añadir_funcion.bind(this);
+        this.f = this.funciones.bind(this);
+        this.borrar = this.borrar_publicacion.bind(this);
         this.perfil = this.perfil_usuario.bind(this);
-        this.cantidad_post = this.cantidad_post_usuario.bind(this);
+        // this.cantidad_post = this.cantidad_post_usuario.bind(this);
         this.publicaciones = this.publicaciones_usuario.bind(this);
-        this.fileInput = React.createRef();
 
     }
 
@@ -75,19 +67,7 @@ class Foro extends React.Component {
         document.getElementById("btn_dentro").style.opacity = 0;
         document.getElementById("btn_dentro").style.display = "none";
     }
-    menu() {
 
-        if (document.getElementById("dashboard-nav-dropdown-menu").style.display == "block") {
-            document.getElementById("dashboard-nav-dropdown-menu").style.display = "none";
-
-        }
-        else {
-            document.getElementById("dashboard-nav-dropdown-menu").style.display = "block";
-
-        }
-    }
-
-    /* Set the width of the side navigation to 0 and the left margin of the page content to 0 */
     closeNav() {
         document.getElementById("mySidemenu").style.width = "0";
         document.getElementById("main").style.marginLeft = "0";
@@ -98,15 +78,9 @@ class Foro extends React.Component {
             document.getElementById("btn_dentro").style.opacity = 1;
         }, 300);
     }
-
-
     pasar_pagina({ currentTarget }) {
         localStorage.setItem('id_articulo', currentTarget.id);
         window.location.href = "/pagina_articulo";
-    }
-
-    ir_crear_post() {
-        window.location.href = "/crear_post";
     }
     ir_anadir_admin() {
         window.location.href = "/anadir_admin";
@@ -119,7 +93,6 @@ class Foro extends React.Component {
         else {
             datos.append("usuario", "");
         }
-
         fetch("http://localhost/php_insti/consultar_usuario.php", {
             method: "POST",
             body: datos
@@ -140,7 +113,6 @@ class Foro extends React.Component {
             )
     }
     filtrado_categorias({ currentTarget }) {
-
         console.log(seleccionado);
         if (seleccionado == currentTarget.id) {
             this.noticia();
@@ -154,9 +126,7 @@ class Foro extends React.Component {
                 document.getElementById(seleccionado).style.backgroundColor = '#1A565D';
                 document.getElementById(seleccionado).style.color = '#9eadae';
             }
-
             seleccionado = currentTarget.id;
-
             var datos = new FormData();
             datos.append('nombre_categoria', currentTarget.id);
 
@@ -188,8 +158,6 @@ class Foro extends React.Component {
             .then(res => res.json())
             .then(
                 (result) => {
-
-
                     this.setState({
                         cantidad_del_post: result
                     });
@@ -200,45 +168,44 @@ class Foro extends React.Component {
             )
     }
 
-    cantidad_post_usuario() {
-        var datos = new FormData();
-
-        datos.append('nombre_categoria', localStorage.getItem("Creador"));
-        fetch("http://localhost/php_insti/cantidad_post.php", {
-            method: "POST",
-            body: datos
-        })
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({
-                        cantidad_del_post: result
-                    });
-                },
-                (error) => {
-                    console.log(error);
-                }
-            )
-    }
-    recoger_categorias() {
-        var datos = new FormData();
-        datos.append('nombre_categoria', localStorage.getItem("Creador"));
-        fetch("http://localhost/php_insti/publicacion_usuario.php", {
-            method: "POST",
-            body: datos
-        })
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    this.setState({
-                        articulo: result
-                    });
-                },
-                (error) => {
-                    console.log(error);
-                }
-            )
-    }
+    // cantidad_post_usuario() {
+    //     var datos = new FormData();
+    //     datos.append('nombre_categoria', localStorage.getItem("Creador"));
+    //     fetch("http://localhost/php_insti/cantidad_post.php", {
+    //         method: "POST",
+    //         body: datos
+    //     })
+    //         .then(res => res.json())
+    //         .then(
+    //             (result) => {
+    //                 this.setState({
+    //                     cantidad_del_post: result
+    //                 });
+    //             },
+    //             (error) => {
+    //                 console.log(error);
+    //             }
+    //         )
+    // }
+    // recoger_categorias() {
+    //     var datos = new FormData();
+    //     datos.append('nombre_categoria', localStorage.getItem("Creador"));
+    //     fetch("http://localhost/php_insti/publicacion_usuario.php", {
+    //         method: "POST",
+    //         body: datos
+    //     })
+    //         .then(res => res.json())
+    //         .then(
+    //             (result) => {
+    //                 this.setState({
+    //                     articulo: result
+    //                 });
+    //             },
+    //             (error) => {
+    //                 console.log(error);
+    //             }
+    //         )
+    // }
 
     recoger_articulo() {
         var datos = new FormData();
@@ -249,8 +216,6 @@ class Foro extends React.Component {
             .then(res => res.json())
             .then(
                 (result) => {
-
-
                     this.setState({
                         articulo: result
                     });
@@ -260,101 +225,45 @@ class Foro extends React.Component {
                 }
             )
     }
-    // borrar_publicacion({ currentTarget }) {
-    //     var datos = new FormData();
-    //     datos.append('id_publicacion', currentTarget.id);
-    //     fetch("http://localhost/php_insti/borrar_publicacion.php", {
-    //         method: "POST",
-    //         body: datos
-    //     })
-    //         .then(res => res.json())
-    //         .then(
-    //             (result) => {
-    //                 if (result == "Correcto") {
-    //                     this.noticia();
-    //                     this.todas_categorias();
-    //                 }
-
-    //             },
-    //             (error) => {
-    //                 console.log(error);
-    //             }
-    //         )
-    // }
-
-    // funciones() {
-    //     localStorage.setItem("usuario", "");
-    //     window.location.reload()
-    // }
-
-    // añadir_funcion() {
-    //     if (localStorage.getItem("usuario") != "") {
-    //         var elemento_cerrar = document.getElementById("cerrar_sesion");
-    //         elemento_cerrar.onclick = this.f;
-
-    //         if (localStorage.getItem("tipo") == "admin") {
-    //             var elemento_admin = document.getElementById("anadir_admin");
-    //             elemento_admin.onclick = this.anadir_admin;
-
-    //         }
-    //         if (localStorage.getItem("tipo") == "cliente") {
-    //             var elemento_crear = document.getElementById("crear_post");
-    //             elemento_crear.onclick = this.crear_post;
-    //         }
-    //     }
-    // }
-    componentDidMount() {
-        this.cantidad_post();
-        this.coger_usuario();
-        this.todas_categorias();
-        this.coger_usuario();
-    }
-    insertar() {
-
-        var datos = new FormData;
-        datos.append('archivo', this.fileInput.current.files[0])
-
-        fetch("http://localhost/Probar_codigo/Probarsubirimg.php", {
-            method: 'POST',
+    borrar_publicacion({ currentTarget }) {
+        var datos = new FormData();
+        datos.append('id_publicacion', currentTarget.id);
+        fetch("http://localhost/php_insti/borrar_publicacion.php", {
+            method: "POST",
             body: datos
         })
-            .then(
-                res =>
-                    res.json()
-
-            )
+            .then(res => res.json())
             .then(
                 (result) => {
-                    this.setState({ imagen_prueba: result });
-                    this.imagen()
+                    if (result == "Correcto") {
+                        this.noticia();
+                        this.todas_categorias();
+                    }
+                },
+                (error) => {
+                    console.log(error);
                 }
             )
-
-
-
     }
-    añadir_imagen() {
-        const cargarImagen = require.context("./upload", true);
-
-        var elemento_padre = document.getElementById("tt").parentNode;
-        var elemento_nuevo = document.createElement("img");
-        elemento_nuevo.setAttribute("src", cargarImagen('./' + this.state.imagen_prueba));
-
-        elemento_padre.appendChild(elemento_nuevo);
+    funciones() {
+        localStorage.setItem("usuario", "");
+        window.location.reload()
     }
-    preview_perfil() {
-        var elemento_antiguo = document.getElementById("preview");
-
-        var elemento_padre = elemento_antiguo.parentNode;
-
-        var elemento_nuevo = document.createElement("div");
-        var escribir = document.createElement("textarea");
-        escribir.setAttribute("className", "preview_perfil");
-        escribir.setAttribute("rows", "4");
-        elemento_nuevo.appendChild(escribir);
-
-        elemento_padre.replaceChild(elemento_nuevo, elemento_antiguo);
-
+    añadir_funcion() {
+        if (localStorage.getItem("usuario") != "") {
+            var elemento_cerrar = document.getElementById("cerrar_sesion");
+            elemento_cerrar.onclick = this.f;
+            if (localStorage.getItem("tipo") == "admin") {
+                var elemento_admin = document.getElementById("anadir_admin");
+                elemento_admin.onclick = this.anadir_admin;
+            }
+        }
+    }
+    componentDidMount() {
+        // this.cantidad_post();
+        this.coger_usuario();
+        // this.todas_categorias();
+        this.noticia();
     }
     perfil_usuario() {
         window.location.href = "/Perfil";
@@ -371,29 +280,18 @@ class Foro extends React.Component {
                     <img src={imagen_perfil} className="dropdown-toggle" data-bs-toggle="dropdown" ></img>
                     {this.state.datos_usuario.map((usuario) => <Perfil id={usuario.Tipo} />)}
                     <a href="/app" >Home</a>
-                    <a href="#" onClick={this.menu}>Registrations</a>
-                    <div id="dashboard-nav-dropdown-menu" className='dashboard-nav-dropdown-menu' style={{ display: "none" }}>
-                        {this.state.categoria.map((nombre) => <a className="dashboard-nav-dropdown-item" id={nombre.Categoria} key={nombre.Categoria} onClick={this.filtrar_categoria}>{nombre.Categoria}</a>)}
-
-                    </div>
-
+                    {this.state.datos_usuario.map((comentario) => <Mi_perfil id={comentario.Tipo} onClick={this.perfil} />)}
+                    <a href="/" >Registrations</a>
                     <a href="#">Reports</a>
-                    <a
-                        href="#" className="dashboard-nav-item" ><i className="fas fa-sign-out-alt"></i> Logout </a>
-
+                    <a href="#" className="dashboard-nav-item" ><i className="fas fa-sign-out-alt"></i> Logout </a>
                 </div>
                 <div id="main">
                     <div className="btnclas" id="btn">
-
                         <button className="btn-open" id="btn_dentro" onClick={this.openNav}>&#9776;</button>
                     </div>
-
                     <div className='dashboard-app'>
-                        <header className='dashboard-toolbar'><a href="#!" className="menu-toggle"></a></header>
-
                         <div className='dashboard-content'>
                             <div className='container'>
-
                                 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
                                 <div className="container">
                                     <div className="row">
@@ -401,12 +299,8 @@ class Foro extends React.Component {
                                             <div className="panel panel-default">
                                                 <div className="userprofile social ">
                                                     <div className="userpic"> <img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="" className="userpicimg" /> </div>
-                                                    {mismousuario
-                                                        ? <h2 type="text" className="username">{localStorage.getItem("Creador")}</h2>
-                                                        : <h3 className="username">{localStorage.getItem("Creador")}</h3>
-                                                    }
-                                                    <p>Gujarat, India</p>
-
+                                                    <h2 type="text" className="username">{localStorage.getItem("Creador")}</h2>
+                                                    <p>Granada, La Zubia</p>
                                                     <div className="socials tex-center"> <a href="" className="btn btn-circle btn-primary ">
                                                         <i className="fa fa-facebook"></i></a> <a href="" className="btn btn-circle btn-danger ">
                                                             <i className="fa fa-google-plus"></i></a> <a href="" className="btn btn-circle btn-info ">
@@ -416,36 +310,35 @@ class Foro extends React.Component {
                                                 <div className="col-md-12 border-top border-bottom">
                                                     <ul className="nav nav-pills pull-left countlist" role="tablist">
                                                         <li role="presentation">
-                                                            <h3>1452<br />
-                                                                <small>Follower</small> </h3>
+                                                            <h3>400<br />
+                                                                <small>Likes</small> </h3>
                                                         </li>
                                                         <li role="presentation">
                                                             <h3>245<br />
-                                                                <small>Following</small> </h3>
+                                                                <small>Dislikes</small> </h3>
                                                         </li>
                                                         <li role="presentation">
-                                                            <h3>{this.state.cantidad_del_post.map((partes) => <div>{partes[0]}</div>)}<br />
-
-                                                                <small>Activity</small> </h3>
+                                                            <h3>3<br />
+                                                                <small>Posts</small> </h3>
                                                         </li>
                                                     </ul>
-
+                                                    <a href="/Editar_perfil" className="btn btn-secondary followbtn float-end mt-4 me-4">Editar</a>
                                                 </div>
                                                 <div className="clearfix"></div>
                                             </div>
                                         </div>
                                     </div>
                                     <div classNameName='botones'>
-                                        <a href="/Editar_perfil">editar</a>
-                                        <button className="btn btn-primary followbtn" onClick={this.todas_categorias}>Follow</button>
-                                        <button className="btn btn-primary followbtn">Follow</button>
-                                        <button className="btn btn-primary followbtn">Follow</button>
+                                        
+                                        <button className="btn btn-primary followbtn" onClick={this.todas_categorias}>Posts</button>
+                                        <button className="btn btn-primary followbtn">Estadisticas</button>
+                                        <button className="btn btn-primary followbtn">algo</button>
                                     </div>
-
-                                    {this.state.articulo.map((partes) => <article id={partes.ID_articulo} key={partes.ID_articulo} ><div className="card border-success  m-4"><div className="card-body"><h5 className="card-title " id={partes.ID_articulo} key={partes.ID_articulo} onClick={this.coger_id}>{partes.Titulo}{partes.User}</h5><p id={partes.Creador} onClick={this.perfil}>Creado por:{partes.Creador}</p><p className="card-text">{partes.Cuerpo}</p></div></div></article>)}
-                                    
+                                    {mismousuario
+                                        ? <div> {this.state.articulo.map((partes) => <article id={partes.ID_articulo} key={partes.ID_articulo} ><div className="card border-success  m-4"><div className="card-body"><h5 className="card-title " id={partes.ID_articulo} key={partes.ID_articulo} onClick={this.coger_id}>{partes.Titulo}{partes.User}</h5><p id={partes.Creador} onClick={this.perfil}>Creado por:{partes.Creador}</p><p className="card-text">{partes.Cuerpo}</p><p>BORRARRRRRRR</p></div></div></article>)}</div>
+                                        : <div> {this.state.articulo.map((partes) => <article id={partes.ID_articulo} key={partes.ID_articulo} ><div className="card border-success  m-4"><div className="card-body"><h5 className="card-title " id={partes.ID_articulo} key={partes.ID_articulo} onClick={this.coger_id}>{partes.Titulo}{partes.User}</h5><p id={partes.Creador} onClick={this.perfil}>Creado por:{partes.Creador}</p><p className="card-text">{partes.Cuerpo}</p></div></div></article>)}</div>
+                                    }
                                 </div>
-
                             </div>
                         </div>
                     </div>

@@ -1,6 +1,4 @@
 import './App.css';
-import imagen_perfil from './Imagenes/avatar-1-48.png';
-import like from './Imagenes/like.png';
 import lupa from './Imagenes/lupa.png';
 import React from 'react';
 function Perfil(props) {
@@ -10,7 +8,6 @@ function Perfil(props) {
         if (props.id == "cliente") {
             return (
                 <a href="/" id='cerrar_sesion' >Logout</a>
-
             )
         }
         if (props.id == "admin") {
@@ -34,7 +31,6 @@ function Perfil(props) {
         )
     }
 }
-
 function Mi_perfil(props) {
     if (props.id == "cliente") {
         return (
@@ -42,7 +38,6 @@ function Mi_perfil(props) {
         )
     }
 }
-
 function Boton(props) {
     if (props.id == "cliente") {
         return (
@@ -50,38 +45,29 @@ function Boton(props) {
         )
     }
 }
-
-
 var seleccionado;
 class Foro extends React.Component {
-
     constructor(props) {
         super(props);
-        this.state = { value: "", articulo: [], categoria: [], imagen_prueba: '', datos_usuario: [], tipo: "" };
+        this.state = { articulo: [], categoria: [], imagen_prueba: '', datos_usuario: [], tipo: "" };
         this.noticia = this.recoger_articulo.bind(this);
         this.todas_categorias = this.recoger_categorias.bind(this);
         this.filtrar_categoria = this.filtrado_categorias.bind(this);
         this.coger_id = this.pasar_pagina.bind(this);
         this.crear_post = this.ir_crear_post.bind(this);
-        this.imagen = this.añadir_imagen.bind(this);
         this.insertar = this.insertar.bind(this);
         this.openNav = this.openNav.bind(this);
         this.closeNav = this.closeNav.bind(this);
         this.barra_busqueda = this.barra_de_busqueda.bind(this);
-        
         this.coger_usuario = this.coger_datos_usuario.bind(this);
         this.funcion = this.añadir_funcion.bind(this);
         this.f = this.funciones.bind(this);
         this.borrar = this.borrar_publicacion.bind(this);
-        this.preview = this.preview_perfil.bind(this);
+        // this.preview = this.preview_perfil.bind(this);
         this.perfil = this.perfil_usuario.bind(this);
-        this.mi_perfil = this.mi_perfil_dentro.bind(this);
-
-
         this.fileInput = React.createRef();
 
     }
-
     openNav() {
         document.getElementById("mySidemenu").style.width = "250px";
         document.getElementById("btn").style.height = "0px";
@@ -93,18 +79,14 @@ class Foro extends React.Component {
         document.getElementById("container").style.marginTop = "10px";
     }
     menu() {
-
         if (document.getElementById("dashboard-nav-dropdown-menu").style.display == "block") {
             document.getElementById("dashboard-nav-dropdown-menu").style.display = "none";
-
         }
         else {
             document.getElementById("dashboard-nav-dropdown-menu").style.display = "block";
 
         }
     }
-
-    /* Set the width of the side navigation to 0 and the left margin of the page content to 0 */
     closeNav() {
         document.getElementById("navbar-form").style.opacity = "1";
         document.getElementById("container").style.marginTop = "70px";
@@ -118,17 +100,13 @@ class Foro extends React.Component {
             document.getElementById("btn_dentro").style.opacity = 1;
         }, 300);
     }
-
-
     pasar_pagina({ currentTarget }) {
         localStorage.setItem('id_articulo', currentTarget.id);
         window.location.href = "/pagina_articulo";
     }
-
     ir_crear_post() {
         window.location.href = "/crear_post";
     }
-
     coger_datos_usuario() {
         var datos = new FormData();
         if (Boolean(localStorage.getItem("usuario")) == true) {
@@ -137,7 +115,6 @@ class Foro extends React.Component {
         else {
             datos.append("usuario", "");
         }
-
         fetch("http://localhost/php_insti/consultar_usuario.php", {
             method: "POST",
             body: datos
@@ -157,24 +134,21 @@ class Foro extends React.Component {
                 }
             )
     }
-    barra_de_busqueda(){
-        var busqueda=document.getElementById("barra_busqueda").value;
-        console.log(busqueda);
-        if(busqueda==false){
+    barra_de_busqueda() {
+        var busqueda = document.getElementById("barra_busqueda").value;
+        if (busqueda == false) {
             window.location.reload();
-        }else{
-        var datos = new FormData();
-
+        } else {
+            var datos = new FormData();
             datos.append('barra_busqueda', busqueda);
-
             fetch("http://localhost/php_insti/filtrar_busqueda.php", {
                 method: "POST",
                 body: datos
             })
-                .then(res => res.json()) 
+                .then(res => res.json())
                 .then(
                     (result) => {
-
+                        console.log(result);
                         this.setState({
                             articulo: result
                         });
@@ -183,8 +157,7 @@ class Foro extends React.Component {
                         console.log(error);
                     }
                 )
-            }
-    
+        }
     }
     filtrado_categorias({ currentTarget }) {
 
@@ -193,7 +166,6 @@ class Foro extends React.Component {
             this.noticia();
             document.getElementById(seleccionado).style.backgroundColor = '#1A565D';
             document.getElementById(seleccionado).style.color = '#9eadae';
-
         } else {
             document.getElementById(currentTarget.id).style.backgroundColor = '#f1f1f121';
             document.getElementById(currentTarget.id).style.color = '#f1f1f1';
@@ -201,12 +173,9 @@ class Foro extends React.Component {
                 document.getElementById(seleccionado).style.backgroundColor = '#1A565D';
                 document.getElementById(seleccionado).style.color = '#9eadae';
             }
-
             seleccionado = currentTarget.id;
-
             var datos = new FormData();
             datos.append('nombre_categoria', currentTarget.id);
-
             fetch("http://localhost/php_insti/filtrar_categorias.php", {
                 method: "POST",
                 body: datos
@@ -225,7 +194,6 @@ class Foro extends React.Component {
                 )
         }
     }
-
     recoger_categorias() {
         var datos = new FormData();
         fetch("http://localhost/php_insti/recoger_categorias.php", {
@@ -244,7 +212,6 @@ class Foro extends React.Component {
                 }
             )
     }
-
     recoger_articulo() {
         var datos = new FormData();
         fetch("http://localhost/php_insti/recoger_informacion.php", {
@@ -279,19 +246,16 @@ class Foro extends React.Component {
                         this.noticia();
                         this.todas_categorias();
                     }
-
                 },
                 (error) => {
                     console.log(error);
                 }
             )
     }
-
     funciones() {
         localStorage.setItem("usuario", "");
         window.location.reload()
     }
-
     añadir_funcion() {
         if (localStorage.getItem("usuario") != "") {
             var elemento_cerrar = document.getElementById("cerrar_sesion");
@@ -312,10 +276,8 @@ class Foro extends React.Component {
         console.log(localStorage.getItem("usuario"));
     }
     insertar() {
-
         var datos = new FormData;
         datos.append('archivo', this.fileInput.current.files[0])
-
         fetch("http://localhost/Probar_codigo/Probarsubirimg.php", {
             method: 'POST',
             body: datos
@@ -331,40 +293,24 @@ class Foro extends React.Component {
                     this.imagen()
                 }
             )
-
-
-
     }
-    añadir_imagen() {
-        const cargarImagen = require.context("./upload", true);
+    // preview_perfil() {
+    //     var elemento_antiguo = document.getElementById("preview");
 
-        var elemento_padre = document.getElementById("tt").parentNode;
-        var elemento_nuevo = document.createElement("img");
-        elemento_nuevo.setAttribute("src", cargarImagen('./' + this.state.imagen_prueba));
+    //     var elemento_padre = elemento_antiguo.parentNode;
 
-        elemento_padre.appendChild(elemento_nuevo);
-    }
-    preview_perfil() {
-        var elemento_antiguo = document.getElementById("preview");
+    //     var elemento_nuevo = document.createElement("div");
+    //     var escribir = document.createElement("textarea");
+    //     escribir.setAttribute("className", "preview_perfil");
+    //     escribir.setAttribute("rows", "4");
+    //     elemento_nuevo.appendChild(escribir);
 
-        var elemento_padre = elemento_antiguo.parentNode;
+    //     elemento_padre.replaceChild(elemento_nuevo, elemento_antiguo);
 
-        var elemento_nuevo = document.createElement("div");
-        var escribir = document.createElement("textarea");
-        escribir.setAttribute("className", "preview_perfil");
-        escribir.setAttribute("rows", "4");
-        elemento_nuevo.appendChild(escribir);
-
-        elemento_padre.replaceChild(elemento_nuevo, elemento_antiguo);
-
-    }
+    // }
     perfil_usuario({ currentTarget }) {
         window.location.href = "/Perfil";
         localStorage.setItem("Creador", currentTarget.id);
-    }
-    mi_perfil_dentro() {
-
-        localStorage.setItem("Creador", localStorage.getItem("nombre_usuario"));
     }
     render() {
         var admin = false;
@@ -380,38 +326,29 @@ class Foro extends React.Component {
                     <a href="#" onClick={this.menu}>Registrations</a>
                     <div id="dashboard-nav-dropdown-menu" className='dashboard-nav-dropdown-menu' style={{ display: "none" }}>
                         {this.state.categoria.map((nombre) => <a className="dashboard-nav-dropdown-item" id={nombre.Categoria} key={nombre.Categoria} onClick={this.filtrar_categoria}>{nombre.Categoria}</a>)}
-
                     </div>
-
-
                     <a href="#">Reports</a>
                     {this.state.datos_usuario.map((usuario) => <Perfil id={usuario.Tipo} algo={usuario.User} />)}
                 </div>
                 <div id="main">
                     <div className="btnclas fixed-top d-flex" id="btn">
                         <button className="btn-open" id="btn_dentro" onClick={this.openNav}>&#9776; </button>
-
-                        <form id="navbar-form" class="navbar-form  mt-2 mb-2 d-flex" role="search">
-                            <input type="text" class="form-control" id="barra_busqueda" placeholder="Search" />
-                            <a class="btn btn-secondary" onClick={this.barra_busqueda}><img class="lupa" src={lupa}></img></a>
+                        <form id="navbar-form" className="navbar-form  mt-2 mb-2 d-flex" role="search">
+                            <input type="text" className="form-control" id="barra_busqueda" placeholder="Search" />
+                            <a className="btn btn-secondary" onClick={this.barra_busqueda}><img className="lupa" src={lupa}></img></a>
                         </form>
                     </div>
-
                     <div className='dashboard-app'>
                         <header className='dashboard-toolbar'><a href="#!" className="menu-toggle"><i className="fas fa-bars"></i></a></header>
-
                         <div className='dashboard-content'>
                             <div className='container' id='container'>
                                 <div className='card '>
                                     <div className='card-header '>
                                         <h1>Foro</h1>
-
+                                        {this.state.datos_usuario.map((comentario) => <div>{comentario.Contra}</div>)}
                                         {this.state.datos_usuario.map((comentario) => <Boton id={comentario.Tipo} />)}
-
-
                                     </div>
                                     <div className='card-body'>
-
                                         {admin
                                             ? <div>
                                                 {this.state.articulo.map((partes) => <div id='articulo_boton'><article id={partes.ID_articulo} key={partes.ID_articulo} onClick={this.coger_id}><div className="card border-success  m-4"><div className="card-body"><h5 className="card-title ">{partes.Titulo}</h5><p className="card-text">{partes.Cuerpo}</p></div></div></article>
@@ -421,11 +358,10 @@ class Foro extends React.Component {
                                             </div>
                                             : <div>
 
-                                                {this.state.articulo.map((partes) => <article id={partes.ID_articulo} key={partes.ID_articulo} className="contenedor_publicacion"><div className="card_post m-4"><div className="card-body"><p id={partes.Creador} onClick={this.perfil} class="Creador_publicacion">Por:{partes.Creador}</p><h5 className="card-title text-primary" id={partes.ID_articulo} key={partes.ID_articulo} onClick={this.coger_id}>{partes.Titulo}{partes.User}</h5><p  id={partes.ID_articulo} key={partes.ID_articulo} onClick={this.coger_id} className="card-text">{partes.Cuerpo}</p><div id={partes.ID_articulo} key={partes.ID_articulo} onClick={this.coger_id} className="ttt"></div><div className="like_dislike"><button class="btn" id="green">L</button><button class="btn" id="red">D</button></div><div class="categoria_post" id={partes.Categoria} onClick={this.filtrar_categoria}>{partes.Categoria}</div></div></div></article>)}
+                                                {this.state.articulo.map((partes) => <article id={partes.ID_articulo} key={partes.ID_articulo} className="contenedor_publicacion"><div className="card_post m-4"><div className="card-body"><p id={partes.Creador} onClick={this.perfil} className="Creador_publicacion">Por:{partes.Creador}</p><h5 className="card-title text-primary" id={partes.ID_articulo} onClick={this.coger_id}>{partes.Titulo}{partes.User}</h5><p id={partes.ID_articulo} onClick={this.coger_id} className="card-text">{partes.Cuerpo}</p><div id={partes.ID_articulo} onClick={this.coger_id} className="ttt"></div><div className="like_dislike"><button className="btn" id="green">L</button><button className="btn" id="red">D</button></div><div className="categoria_post" id={partes.Categoria} onClick={this.filtrar_categoria}>{partes.Categoria}</div></div></div></article>)}
 
                                             </div>
                                         }
-
                                     </div>
                                 </div>
                             </div>

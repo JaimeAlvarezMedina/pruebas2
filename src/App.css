@@ -1,18 +1,16 @@
 
-
-/* The sidepanel menu */
 .sidemenu {
-  height: 100vh; /* Specify a height */
-  width: 0; /* 0 width - change this with JavaScript */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Stay on top */
+  height: 100vh; 
+  width: 0; 
+  position: fixed; 
+  z-index: 1; 
   top: 0;
   left: 0;
   background: #1a565d;
   
-  overflow-x: hidden; /* Disable horizontal scroll */
-  padding-top: 60px; /* Place content 60px from the top */
-  transition: 0.5s; /* 0.5 second transition effect to slide in the sidepanel */
+  overflow-x: hidden; 
+  padding-top: 60px;
+  transition: 0.5s; 
 }
 .btnclas{
   transition: 0.5s;
@@ -22,7 +20,7 @@
   display: flex !important;
   cursor: pointer;
 }
-/* The sidepanel links */
+
 .sidemenu a {
   padding: 15px 8px 15px 32px;
   text-decoration: none;
@@ -32,14 +30,13 @@
   transition: 0.3s;
 }
 
-/* When you mouse over the navigation links, change their color */
 .sidemenu a:hover {
   color: #f1f1f1;
 }
 .dashboard-nav-dropdown-item:hover{
   color: #f1f1f1 !important;
 }
-/* Position and style the close button (top right corner) */
+
 .sidemenu .cerrar {
   position: absolute;
   top: 0;
@@ -50,7 +47,7 @@
 .sidemenu .cerrar:hover {
   cursor: pointer;
 }
-/* Style the button that is used to open the sidepanel */
+
 .btn-open {
   font-size: 20px;
   cursor: pointer;
@@ -150,9 +147,6 @@ height:160px;
   margin-bottom:35px;
 }
 
-/*==============================*/
-/*====== siderbar user profile =====*/
-/*==============================*/
 .nav>li>a.userdd {
   padding: 5px 15px
 }
@@ -238,9 +232,7 @@ float: left;
 width: 100%;
 margin: 0;
 }
-/*==============================*/
-/*====== Social Profile css =====*/
-/*==============================*/
+
 .countlist h3 {
 margin-left: 30px;
 font-weight: 400;
@@ -372,4 +364,148 @@ transform: scale(1.2)
   margin-right: .5rem!important;
 }
 
+.single_advisor_profile{
+  transition:0.5s;
+    border-radius: 15px;
+  
+}
+.single_advisor_profile:hover{
+  transition:0.5s;
+    transform: translateY(-12px);
+    box-shadow: 0px 6px 10px 0 rgba(0, 0, 0, 0.646);
+    
+  
+}
+.single_advisor_profile:hover .imagen_prueba{
+  transform: scale(1.1);
+  border-radius: 10px;
 
+}
+  .single_advisor_profile .advisor_thumb {
+      position: relative;
+      z-index: 1;
+      border-radius: 15px 15px 0 0;
+      margin: 0 auto;
+      padding: 30px 30px 0 30px;
+      background-color: #3f43fd;
+      overflow: hidden;
+  }
+  .single_advisor_profile .advisor_thumb::after {
+      -webkit-transition-duration: 500ms;
+      transition-duration: 500ms;
+      position: absolute;
+      width: 150%;
+      height: 80px;
+      bottom: -45px;
+      left: -25%;
+      content: "";
+      background-color: #ffffff;
+      -webkit-transform: rotate(-15deg);
+      transform: rotate(-15deg);
+  }
+  @media only screen and (max-width: 575px) {
+      .single_advisor_profile .advisor_thumb::after {
+          height: 160px;
+          bottom: -90px;
+      }
+  }
+  .single_advisor_profile .advisor_thumb .social-info {
+      position: absolute;
+      z-index: 1;
+      width: 100%;
+      bottom: 0;
+      right: 30px;
+      text-align: right;
+  }
+  .single_advisor_profile .advisor_thumb .social-info a {
+      font-size: 14px;
+      color: #020710;
+      padding: 0 5px;
+  }
+  .single_advisor_profile .advisor_thumb .social-info a:hover,
+  .single_advisor_profile .advisor_thumb .social-info a:focus {
+      color: #3f43fd;
+      
+  }
+  .single_advisor_profile .advisor_thumb .social-info a:last-child {
+      padding-right: 0;
+  }
+  .single_advisor_profile .single_advisor_details_info {
+      position: relative;
+      z-index: 1;
+      padding: 30px;
+      text-align: right;
+      -webkit-transition-duration: 500ms;
+      transition-duration: 500ms;
+      border-radius: 0 0 15px 15px;
+      background-color: #ffffff;
+  }
+  .single_advisor_profile .single_advisor_details_info::after {
+      -webkit-transition-duration: 500ms;
+      transition-duration: 500ms;
+      position: absolute;
+      z-index: 1;
+      width: 50px;
+      height: 3px;
+      background-color: #3f43fd;
+      content: "";
+      top: 12px;
+      right: 30px;
+  }
+  .single_advisor_profile .single_advisor_details_info h6 {
+      margin-bottom: 0.25rem;
+      -webkit-transition-duration: 500ms;
+      transition-duration: 500ms;
+  }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .single_advisor_profile .single_advisor_details_info h6 {
+          font-size: 14px;
+      }
+  }
+  .single_advisor_profile .single_advisor_details_info p {
+      -webkit-transition-duration: 500ms;
+      transition-duration: 500ms;
+      margin-bottom: 0;
+      font-size: 14px;
+  }
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .single_advisor_profile .single_advisor_details_info p {
+          font-size: 12px;
+      }
+  }
+  .single_advisor_profile:hover .advisor_thumb::after,
+  .single_advisor_profile:focus .advisor_thumb::after {
+      background-color: #070a57;
+      
+  }
+  .single_advisor_profile:hover .advisor_thumb .social-info a,
+  .single_advisor_profile:focus .advisor_thumb .social-info a {
+      color: #ffffff;
+  }
+  .single_advisor_profile:hover .advisor_thumb .social-info a:hover,
+  .single_advisor_profile:hover .advisor_thumb .social-info a:focus,
+  .single_advisor_profile:focus .advisor_thumb .social-info a:hover,
+  .single_advisor_profile:focus .advisor_thumb .social-info a:focus {
+      color: #ffffff;
+  }
+  .single_advisor_profile:hover .single_advisor_details_info,
+  .single_advisor_profile:focus .single_advisor_details_info {
+      background-color: #070a57;
+  }
+  .single_advisor_profile:hover .single_advisor_details_info::after,
+  .single_advisor_profile:focus .single_advisor_details_info::after {
+      background-color: #ffffff;
+  }
+  .single_advisor_profile:hover .single_advisor_details_info h6,
+  .single_advisor_profile:focus .single_advisor_details_info h6 {
+      color: #ffffff;
+  }
+  .single_advisor_profile:hover .single_advisor_details_info p,
+  .single_advisor_profile:focus .single_advisor_details_info p {
+      color: #ffffff;
+  }
+  .imagen_prueba{
+    border-radius: 10px;
+    transition: 0.5s;
+  }
+  

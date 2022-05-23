@@ -38,7 +38,10 @@ class Articulo extends React.Component {
     render(){
         return (
             <div id='todo'>
+                
                 {this.state.noticia.map((partes)=><div id='articulo'><h2>{partes.Titulo}</h2><p>{partes.Cuerpo}</p></div>)}
+                <button className="btn" id="green">L</button><button className="btn" id="red">D</button>
+                
             </div>
         
         );
