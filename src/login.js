@@ -26,7 +26,7 @@ class Login extends React.Component{
                   if(result=="Correcto"){
                     localStorage.setItem("usuario",this.state.usuario);
                     
-                    window.location.href="/app";
+                    window.location.href="/foro";
                   }
                   else{
                     this.setState({contra:""});
