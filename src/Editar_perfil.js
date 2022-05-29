@@ -44,12 +44,14 @@ class Foro extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { articulo: [], categoria: [], imagen_prueba: '', datos_usuario: [], tipo: "" };
+        this.state = { articulo: [], categoria: [], imagen_prueba: '', datos_usuario: [],articulo_count:[], tipo: "" };
         this.coger_id = this.pasar_pagina.bind(this);
         this.crear_post = this.ir_crear_post.bind(this);
         this.openNav = this.openNav.bind(this);
         this.closeNav = this.closeNav.bind(this);
+        this.count = this.count_categorias.bind(this);
         this.coger_usuario = this.coger_datos_usuario.bind(this);
+        this.categorias_distintas = this.recoger_categorias_distintas.bind(this);
         this.funcion = this.añadir_funcion.bind(this);
         this.f = this.funciones.bind(this);
         this.perfil = this.perfil_usuario.bind(this);
@@ -110,7 +112,49 @@ class Foro extends React.Component {
                 }
             )
     }
-
+    
+    recoger_categorias_distintas() {
+        var datos = new FormData();
+        datos.append('nombre_categoria', localStorage.getItem("Creador"));
+        fetch("http://localhost/php_insti/categorias_distintas.php", {
+            method: "POST",
+            body: datos
+        })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        articulo: result
+                    });
+                    console.log(this.articulo);
+                },
+                (error) => {
+                    console.log(error);
+                }
+            )
+    }
+    count_categorias() {
+        var datos = new FormData();
+        var array=[];
+        datos.append('nombre_categoria', localStorage.getItem("Creador"));
+        fetch("http://localhost/php_insti/count_categorias.php", {
+            method: "POST",
+            body: datos
+        })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        
+                        articulo_count: result
+                    });
+                    
+                },
+                (error) => {
+                    console.log(error);
+                }
+            )
+    }
     funciones() {
         localStorage.setItem("usuario", "");
         window.location.reload()
@@ -128,7 +172,8 @@ class Foro extends React.Component {
     }
     componentDidMount() {
         this.coger_usuario();
-        console.log(localStorage.getItem("usuario"));
+        this.count();
+        this.categorias_distintas();
     }
     perfil_usuario({ currentTarget }) {
         window.location.href = "/Perfil";
@@ -146,10 +191,10 @@ class Foro extends React.Component {
             <div className='dashboard' onMouseEnter={this.funcion}>
                 <div id="mySidemenu" className="sidemenu">
                     <a href="#" className="cerrar" onClick={this.closeNav}>&times;</a>
-                    <a href="/app" >Home</a>
+                    <a href="/foro" >Home</a>
                     {this.state.datos_usuario.map((comentario) => <Mi_perfil id={comentario.Tipo} onClick={this.perfil} />)}
-                    <a href="/" >Registrations</a>
-                    <a href="#">Reports</a>
+                    <a href="/" >Categorias</a>
+                    <a href="/Nuestro_equipo">Nuestro equipo</a>
                     {this.state.datos_usuario.map((usuario) => <Perfil id={usuario.Tipo} algo={usuario.User} />)}
                 </div>
                 <div id="main">
@@ -206,7 +251,7 @@ class Foro extends React.Component {
                                                                 <h6 class="mb-0">Nickname</h6>
                                                             </div>
                                                             <div class="col-sm-9 text-secondary">
-                                                                <input type="text" class="form-control" value={localStorage.getItem("Creador")} />
+                                                                <input type="text" class="form-control" placeholder={localStorage.getItem("Creador")} />
                                                             </div>
                                                         </div>
                                                         <div class="row mb-3">
@@ -247,26 +292,9 @@ class Foro extends React.Component {
                                                         <div class="card">
                                                             <div class="card-body">
                                                                 <h5 class="d-flex align-items-center mb-3">Categorias</h5>
-                                                                <p>Espadas</p>
-                                                                <div class="progress mb-3" style={{ height: " 5px" }}>
-                                                                    <div class="progress-bar bg-primary" role="progressbar" style={{ width: "60%" }} aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                                                </div>
-                                                                <p>Ornitorrincos</p>
-                                                                <div class="progress mb-3" style={{ height: "5px" }}>
-                                                                    <div class="progress-bar bg-danger" role="progressbar" style={{ width: " 30%" }} aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
-                                                                </div>
-                                                                <p>De blogs</p>
-                                                                <div class="progress mb-3" style={{ height: " 5px" }}>
-                                                                    <div class="progress-bar bg-success" role="progressbar" style={{ width: " 25%" }} aria-valuenow="89" aria-valuemin="0" aria-valuemax="100"></div>
-                                                                </div>
-                                                                <p>De los blogs de los post de los blogs</p>
-                                                                <div class="progress mb-3" style={{ height: " 5px" }}>
-                                                                    <div class="progress-bar bg-warning" role="progressbar" style={{ width: " 15%" }} aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
-                                                                </div>
-                                                                <p>De los blogs de los post de los blogs dentro de otro psot de otro blog</p>
-                                                                <div class="progress" style={{ height: " 5px" }}>
-                                                                    <div class="progress-bar bg-info" role="progressbar" style={{ width: " 5%" }} aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
-                                                                </div>
+                                                                {this.state.articulo.map((partes) =><div className='mb-3' id={partes.Categoria} key={partes.ID_articulo}><p>{partes.Categoria} {Math.round((partes.algo *100)/partes.Total_post)}%</p><div class="d-flex"><div class="progress " style={{ height: " 5px",width: "70%" }}><div class="progress-bar bg-primary"  style={{ width: (partes.algo *100)/6+"%" }} ></div></div></div></div>)}
+                                                                
+                                                                {this.state.articulo_count.map[0]}
                                                             </div>
                                                         </div>
                                                     </div>

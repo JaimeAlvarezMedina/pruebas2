@@ -30,21 +30,15 @@ function Perfil(props) {
         }
     }
 }
-function Mi_perfil(props) {
-    if (props.id == "cliente") {
-        return (
-            <a href="/Perfil" id="mi_perfil">Mi perfil</a>
-        )
-    }
-}
+
 var seleccionado;
 class Foro extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {  articulo: [], categoria: [], imagen_prueba: '', datos_usuario: [], tipo: "", cantidad_del_post: [] };
+        this.state = {  articulo: [], categoria: [], imagen_prueba: '', datos_usuario: [], tipo: "", cantidad_del_post: [],datos:[] };
         this.noticia = this.recoger_articulo.bind(this);
-        // this.todas_categorias = this.recoger_categorias.bind(this);
+        this.todas_categorias = this.recoger_categorias.bind(this);
         this.filtrar_categoria = this.filtrado_categorias.bind(this);
         this.coger_id = this.pasar_pagina.bind(this);
         this.openNav = this.openNav.bind(this);
@@ -54,10 +48,12 @@ class Foro extends React.Component {
         this.funcion = this.añadir_funcion.bind(this);
         this.f = this.funciones.bind(this);
         this.borrar = this.borrar_publicacion.bind(this);
+        this.datos = this.recoger_datos.bind(this);
+        this.borrar = this.borrar_post.bind(this);
         this.perfil = this.perfil_usuario.bind(this);
-        // this.cantidad_post = this.cantidad_post_usuario.bind(this);
+        this.cantidad_post = this.cantidad_post_usuario.bind(this);
         this.publicaciones = this.publicaciones_usuario.bind(this);
-
+        this.actividad = this.actividad_usuario.bind(this);
     }
 
     openNav() {
@@ -71,7 +67,7 @@ class Foro extends React.Component {
     closeNav() {
         document.getElementById("mySidemenu").style.width = "0";
         document.getElementById("main").style.marginLeft = "0";
-        document.getElementById("btn").style.height = "50px";
+        document.getElementById("btn").style.height = "70px";
         document.getElementById("btn_dentro").style.display = "block";
         setTimeout(function () {
 
@@ -112,6 +108,27 @@ class Foro extends React.Component {
                 }
             )
     }
+    borrar_post({ currentTarget }) {
+            var datos = new FormData();
+            datos.append('id_publicacion', currentTarget.id);
+
+            fetch("http://localhost/php_insti/borrar_publicacion.php", {
+                method: "POST",
+                body: datos
+            })
+                .then(res => res.json())
+                .then(
+                    (result) => {
+
+                        alert("borrado");
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                )
+        }
+    
+    
     filtrado_categorias({ currentTarget }) {
         console.log(seleccionado);
         if (seleccionado == currentTarget.id) {
@@ -167,46 +184,106 @@ class Foro extends React.Component {
                 }
             )
     }
+    actividad_usuario(){//ultimos likes que a dado el usuario
+        
+        var datos = new FormData();
+        datos.append('creador', localStorage.getItem("Creador"));
+        fetch("http://localhost/php_insti/actividad_usuario.php", {
+            method: "POST",
+            body: datos
+        })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    
+                    this.setState({
+                        
+                        articulo: result
+                    });
+                },
+                (error) => {
+                    console.log(error);
+                }
+            )
+    }
+    publicaciones_usuario() {
+        var datos = new FormData();
+        datos.append('creador', localStorage.getItem("Creador"));
+        fetch("http://localhost/php_insti/publicacion_usuario.php", {
+            method: "POST",
+            body: datos
+        })
+            .then(res => res.json())
+            .then(
+                (result) => {
 
-    // cantidad_post_usuario() {
-    //     var datos = new FormData();
-    //     datos.append('nombre_categoria', localStorage.getItem("Creador"));
-    //     fetch("http://localhost/php_insti/cantidad_post.php", {
-    //         method: "POST",
-    //         body: datos
-    //     })
-    //         .then(res => res.json())
-    //         .then(
-    //             (result) => {
-    //                 this.setState({
-    //                     cantidad_del_post: result
-    //                 });
-    //             },
-    //             (error) => {
-    //                 console.log(error);
-    //             }
-    //         )
-    // }
-    // recoger_categorias() {
-    //     var datos = new FormData();
-    //     datos.append('nombre_categoria', localStorage.getItem("Creador"));
-    //     fetch("http://localhost/php_insti/publicacion_usuario.php", {
-    //         method: "POST",
-    //         body: datos
-    //     })
-    //         .then(res => res.json())
-    //         .then(
-    //             (result) => {
-    //                 this.setState({
-    //                     articulo: result
-    //                 });
-    //             },
-    //             (error) => {
-    //                 console.log(error);
-    //             }
-    //         )
-    // }
 
+                    this.setState({
+                        cantidad_del_post: result
+                    });
+                },
+                (error) => {
+                    console.log(error);
+                }
+            )
+    }
+    cantidad_post_usuario() {
+        var datos = new FormData();
+        datos.append('nombre_categoria', localStorage.getItem("Creador"));
+        fetch("http://localhost/php_insti/cantidad_post.php", {
+            method: "POST",
+            body: datos
+        })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        cantidad_del_post: result
+                    });
+                },
+                (error) => {
+                    console.log(error);
+                }
+            )
+    }
+    recoger_categorias() {
+        var datos = new FormData();
+        datos.append('Creador', localStorage.getItem("Creador"));
+        fetch("http://localhost/php_insti/publicacion_usuario.php", {
+            method: "POST",
+            body: datos
+        })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        articulo: result
+                    });
+                },
+                (error) => {
+                    console.log(error);
+                }
+            )
+    }
+    recoger_datos() {
+        var datos = new FormData();
+        datos.append('Creador', localStorage.getItem("Creador"));
+        fetch("http://localhost/php_insti/recoger_datos.php", {
+            method: "POST",
+            body: datos
+        })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        datos: result
+                    });
+                },
+                (error) => {
+                    console.log(error);
+                }
+            )
+    }
     recoger_articulo() {
         var datos = new FormData();
         fetch("http://localhost/php_insti/recoger_informacion.php", {
@@ -260,10 +337,10 @@ class Foro extends React.Component {
         }
     }
     componentDidMount() {
-        // this.cantidad_post();
+        this.cantidad_post();
         this.coger_usuario();
-        // this.todas_categorias();
-        this.noticia();
+        this.todas_categorias();
+        this.datos();
     }
     perfil_usuario() {
         window.location.href = "/Perfil";
@@ -279,15 +356,15 @@ class Foro extends React.Component {
                     <a href="javascript:void(0)" className="cerrar" onClick={this.closeNav}>&times;</a>
                     <img src={imagen_perfil} className="dropdown-toggle" data-bs-toggle="dropdown" ></img>
                     {this.state.datos_usuario.map((usuario) => <Perfil id={usuario.Tipo} />)}
-                    <a href="/app" >Home</a>
-                    {this.state.datos_usuario.map((comentario) => <Mi_perfil id={comentario.Tipo} onClick={this.perfil} />)}
-                    <a href="/" >Registrations</a>
-                    <a href="#">Reports</a>
+                    <a href="/foro" >Home</a>
+                    
+                    <a href="/" >Categorias</a>
+                    <a href="/Nuestro_equipo">Nuestro equipo</a>
                     <a href="#" className="dashboard-nav-item" ><i className="fas fa-sign-out-alt"></i> Logout </a>
                 </div>
                 <div id="main">
-                    <div className="btnclas" id="btn">
-                        <button className="btn-open" id="btn_dentro" onClick={this.openNav}>&#9776;</button>
+                    <div className="btnclas fixed-top d-flex" id="btn">
+                        <button className="btn-open" id="btn_dentro" onClick={this.openNav}>&#9776; </button>           
                     </div>
                     <div className='dashboard-app'>
                         <div className='dashboard-content'>
@@ -310,20 +387,23 @@ class Foro extends React.Component {
                                                 <div className="col-md-12 border-top border-bottom">
                                                     <ul className="nav nav-pills pull-left countlist" role="tablist">
                                                         <li role="presentation">
-                                                            <h3>400<br />
+                                                            <h3>{this.state.datos.map((partes) => <div>{partes.suma}</div>)}<br />
                                                                 <small>Likes</small> </h3>
                                                         </li>
                                                         <li role="presentation">
-                                                            <h3>245<br />
+                                                            <h3>{this.state.datos.map((partes) => <div>{partes.resta}</div>)}<br />
                                                                 <small>Dislikes</small> </h3>
                                                         </li>
                                                         <li role="presentation">
-                                                            <h3>3<br />
+                                                            <h3>{this.state.cantidad_del_post.map((partes) => <div>{partes[0]}</div>)}<br />
                                                                 <small>Posts</small> </h3>
                                                         </li>
                                                     </ul>
-                                                    <a href="/Editar_perfil" className="btn btn-secondary followbtn float-end mt-4 me-4">Editar</a>
-                                                </div>
+                                                    {mismousuario
+                                                    ?<a href="/Editar_perfil" className="btn btn-secondary followbtn float-end mt-4 me-4">Editar</a>
+                                                    :<a href="/Editar_perfil" className="btn btn-secondary followbtn float-end mt-4 me-4">dd</a>
+                                                    }
+                                                    </div>
                                                 <div className="clearfix"></div>
                                             </div>
                                         </div>
@@ -332,10 +412,10 @@ class Foro extends React.Component {
                                         
                                         <button className="btn btn-primary followbtn" onClick={this.todas_categorias}>Posts</button>
                                         <button className="btn btn-primary followbtn">Estadisticas</button>
-                                        <button className="btn btn-primary followbtn">algo</button>
+                                        <button onClick={this.actividad} className="btn btn-primary followbtn" >Actividad</button>
                                     </div>
                                     {mismousuario
-                                        ? <div> {this.state.articulo.map((partes) => <article id={partes.ID_articulo} key={partes.ID_articulo} ><div className="card border-success  m-4"><div className="card-body"><h5 className="card-title " id={partes.ID_articulo} key={partes.ID_articulo} onClick={this.coger_id}>{partes.Titulo}{partes.User}</h5><p id={partes.Creador} onClick={this.perfil}>Creado por:{partes.Creador}</p><p className="card-text">{partes.Cuerpo}</p><p>BORRARRRRRRR</p></div></div></article>)}</div>
+                                        ? <div> {this.state.articulo.map((partes) => <article id={partes.ID_articulo} key={partes.ID_articulo} ><div className="card border-success  m-4"><div className="card-body"><h5 className="card-title " id={partes.ID_articulo} key={partes.ID_articulo} onClick={this.coger_id}>{partes.Titulo}</h5><p id={partes.Creador} onClick={this.perfil}>Creado por:{partes.Creador}</p><p className="card-text">{partes.Cuerpo}</p><p>{partes.User}</p><p id={partes.ID_articulo} onClick={this.borrar}>BORRAR</p></div></div></article>)}</div>
                                         : <div> {this.state.articulo.map((partes) => <article id={partes.ID_articulo} key={partes.ID_articulo} ><div className="card border-success  m-4"><div className="card-body"><h5 className="card-title " id={partes.ID_articulo} key={partes.ID_articulo} onClick={this.coger_id}>{partes.Titulo}{partes.User}</h5><p id={partes.Creador} onClick={this.perfil}>Creado por:{partes.Creador}</p><p className="card-text">{partes.Cuerpo}</p></div></div></article>)}</div>
                                     }
                                 </div>

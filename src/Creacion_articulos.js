@@ -1,171 +1,242 @@
-import './Creacion_articulos.css';
+import './App.css';
 import React from 'react';
-import imagen_perfil from './Imagenes/avatar-1-48.png';
-import Imagen_mas from './Imagenes/Boton+.png';
-import logo from './upload/logo.png';
 import Imagen_foto from './Imagenes/Paisaje.png';
 import Imagen_texto from './Imagenes/Boton_texto.png';
-import ReactDOM from 'react-dom';
-class Foro extends React.Component {
+function Perfil(props) {
+  localStorage.setItem("tipo", props.id);
+  localStorage.setItem("nombre_usuario", props.algo);
+  if (Boolean(localStorage.getItem("usuario")) == true) {
+    if (props.id == "cliente") {
+      return (
+        <a href="/" id='cerrar_sesion' >Logout</a>
+      )
+    }
+    if (props.id == "admin") {
+      return (
+        <div>
 
+          <a href="/anadir_admin" >Añadir administrador</a>
+          <a href="/" id='cerrar_sesion'>Logout</a>
+        </div>
+      )
+    }
+    if (props.id != "admin" && props.id != "cliente") {
+      return (
+        <a href="/login" >Login</a>
+      )
+    }
+  }
+  else {
+    return (
+      <a href="/login" >Login</a>
+    )
+  }
+}
+function Mi_perfil(props) {
+  if (props.id == "cliente") {
+    return (
+      <a href="/Perfil" id="mi_perfil">Mi perfil</a>
+    )
+  }
+}
+if (texto == undefined) {
+  var texto = [];
+}
+class Foro extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { value: "", imagen_prueba: '' };
-    this.seleccion = this.seleccion_opcion.bind(this);
+    this.state = { articulo: [], categoria: [], imagen_prueba: '', datos_usuario: [], tipo: "",contador: 0,nombre_imagen: "", error: "" };
     this.texto = this.opcion_texto.bind(this);
     this.imagen = this.opcion_imagen.bind(this);
-    this.imagen_añadir = this.añadir_imagen.bind(this);
-    this.insertar = this.insertar.bind(this);
-    this.fileInput = React.createRef();
+    this.subir_post = this.crear_post.bind(this);
+    this.subir_datos = this.subir_base_datos.bind(this);
+    this.openNav = this.openNav.bind(this);
+    this.closeNav = this.closeNav.bind(this);
+  }
+  openNav() {
+    document.getElementById("mySidemenu").style.width = "250px";
+    document.getElementById("btn").style.height = "0px";
+    document.getElementById("main").style.marginLeft = "250px";
+    document.getElementById("btn_dentro").style.opacity = 0;
+    document.getElementById("btn_dentro").style.display = "none";
+}
+
+closeNav() {
+    document.getElementById("mySidemenu").style.width = "0";
+    document.getElementById("main").style.marginLeft = "0";
+    document.getElementById("btn").style.height = "50px";
+    document.getElementById("btn_dentro").style.display = "block";
+    setTimeout(function () {
+
+        document.getElementById("btn_dentro").style.opacity = 1;
+    }, 300);
+}
+  subir_base_datos() {
+    var datos = new FormData();
+    datos.append('creador', localStorage.getItem("usuario"));
+    datos.append('cuerpo', texto.join('//-//'));
+    datos.append('titulo', document.getElementById("titulo").value);
+    datos.append('categoria', document.getElementById("categoria").value);
+    fetch("http://localhost/php_insti/subir_post.php", {
+      method: "POST",
+      body: datos
+    })
+      .then(res => res.json())
+      .then(
+        (result) => {
+          if (result == "Correcto") {
+            window.location.href = "/foro";
+          }
+
+        },
+        (error) => {
+          console.log(error);
+        }
+      )
   }
 
-  seleccion_opcion() {
-    var elemento_antiguo = document.getElementById("imagen_anadir");
+  crear_post(contador) {
 
-    var elemento_padre = elemento_antiguo.parentNode;
+    if ((document.getElementById("img-" + 0) != null || document.getElementById("txt-" + 0) != null) || document.getElementById("titulo").value == "" || document.getElementById("categoria").value == "") {
+      if (document.getElementById("img-" + contador) != null) {
 
-    var elemento_nuevo = document.createElement("div");
-    elemento_nuevo.setAttribute("id", "seleccionar_opcion");
+        var datos = new FormData();
+        datos.append('usuario', localStorage.getItem("usuario"));
+        datos.append('subir_archivo', document.getElementById("img-" + contador).files[0]);
+        fetch("http://localhost/php_insti/upload.php", {
+          method: "POST",
+          body: datos
+        })
+          .then(res => res.json())
+          .then(
+            (result) => {
+              console.log(contador);
+              texto[contador] = result;
+              console.log(texto);
+              console.log(contador);
+            },
+            (error) => {
+              console.log(error);
+            }
+          )
 
-    var imagentexto = document.createElement("img");
-    imagentexto.onclick = this.texto;
-    imagentexto.setAttribute("alt", "Insertar texto");
-    imagentexto.setAttribute("id", "foto_texto");
-    imagentexto.setAttribute("src", Imagen_texto);
+      }
+      if (document.getElementById("txt-" + contador) != null) {
+        console.log("txt" + contador);
+        texto[contador] = document.getElementById("txt-" + contador).value;
+        console.log(texto);
+      }
 
-    elemento_nuevo.appendChild(imagentexto);
 
-    var imagenfoto = document.createElement("img");
-    imagenfoto.onclick = this.imagen;
-    imagenfoto.setAttribute("id", "foto_paisaje");
-    imagenfoto.setAttribute("src", Imagen_foto);
-    elemento_nuevo.appendChild(imagenfoto);
 
-    elemento_padre.replaceChild(elemento_nuevo, elemento_antiguo);
+      if (document.getElementById("img-" + (contador + 1)) != null || document.getElementById("txt-" + (contador + 1)) != null) {//Si no existe ninguno de estos elementos en el documentop no sigue
+        this.subir_post(contador + 1);
+      }
+      else {
+        setTimeout(this.subir_datos, 2000);
+      }
+    }
+    else {
+      var elemento = document.getElementById("alerta");
+      elemento.setAttribute("role", "alert");
+      elemento.setAttribute("class", "alert alert-danger");
+      this.setState({ error: "Necesita introducir titulo,contenido y categoría en el post para subirlo" });
+    }
+
   }
 
   opcion_imagen() {
-    var elemento_antiguo = document.getElementById("seleccionar_opcion");
+    this.setState({ contador: this.state.contador + 1 });
+    var elemento_nuevo = document.getElementById("todo_post");
+    var elemento1 = document.createElement("input");
+    elemento1.setAttribute("type", "hidden");
+    elemento1.setAttribute("name", "MAX_FILE_SIZE");
+    elemento1.setAttribute("value", "40000000");
+    elemento_nuevo.appendChild(elemento1);
+    var elemento2 = document.createElement("p");
+    elemento2.appendChild(document.createTextNode("Subir archivo:"));
+    var elemento2_1 = document.createElement("input");
+    elemento2_1.setAttribute("id", "img-" + this.state.contador);
+    elemento2_1.setAttribute("name", "subir_archivo");
+    elemento2_1.setAttribute("type", "file");
+    elemento2.appendChild(elemento2_1);
 
-    var elemento_padre = elemento_antiguo.parentNode;
-
-    var elemento_nuevo = document.createElement("div");
-    var escribir = document.createElement("textarea");
-    escribir.setAttribute("class", "form-control");
-    escribir.setAttribute("rows", "4");
-    elemento_nuevo.appendChild(escribir);
-
-    var opciones = document.createElement("img");
-    opciones.setAttribute("id", "imagen_anadir");
-    opciones.setAttribute("src", Imagen_mas);
-    opciones.onclick = this.seleccion;
-    elemento_nuevo.appendChild(opciones);
-    
-    elemento_padre.replaceChild(elemento_nuevo, elemento_antiguo);
+    elemento_nuevo.appendChild(elemento2);
+ 
 
   }
 
   opcion_texto() {
-    var elemento_antiguo = document.getElementById("seleccionar_opcion");
-
-    var elemento_padre = elemento_antiguo.parentNode;
-
-    var elemento_nuevo = document.createElement("div");
+    this.setState({ contador: this.state.contador + 1 });
+    var elemento_nuevo = document.getElementById("todo_post");
     var escribir = document.createElement("textarea");
-    escribir.setAttribute("class", "form-control");
+    escribir.setAttribute("id", "txt-" + this.state.contador);
+    escribir.setAttribute("class", "textarea form-control");
     escribir.setAttribute("rows", "4");
     elemento_nuevo.appendChild(escribir);
-
-    var opciones = document.createElement("img");
-    opciones.setAttribute("id", "imagen_anadir");
-    opciones.setAttribute("src", Imagen_mas);
-    opciones.onclick = this.seleccion;
-    elemento_nuevo.appendChild(opciones);
-
-    elemento_padre.replaceChild(elemento_nuevo, elemento_antiguo);
-
   }
-  insertar() {
 
-    var datos = new FormData;
-    datos.append('archivo', this.fileInput.current.files[0])
-
-    fetch("http://localhost/Probar_codigo/Probarsubirimg.php", {
-      method: 'POST',
-      body: datos
-    })
-      .then(
-        res =>
-          res.json()
-
-      )
-      .then(
-        (result) => {
-          this.setState({ imagen_prueba: result });
-          this.imagen()
-        }
-      )
-      .then(
-
-
-      )
-
-
-  }
-  añadir_imagen() {
-    const cargarImagen = require.context("./upload", true);
-
-    var elemento_padre = document.getElementById("tt").parentNode;
-    var elemento_nuevo = document.createElement("img");
-    elemento_nuevo.setAttribute("src", cargarImagen('./' + this.state.imagen_prueba));
-
-    elemento_padre.appendChild(elemento_nuevo);
-  }
-  principal(){
-    window.location.href="/";
-  }
   render() {
     return (
-      
-        <div class='dashboard-app'>
-          <header class='dashboard-toolbar'><a href="#!" class="menu-toggle"><i class="fas fa-bars"></i></a></header>
-          <div class='dashboard-content'>
-            <div class='container'>
-              <div class='card'>
-                <div class='card-header'>
-                  <h1>Welcome back Jim</h1>
-                </div>
-                <div class='card-body'>
-                  <main>
-                    <div id='marco_anadir'>
-                      <img src={Imagen_mas} id="imagen_anadir" onClick={this.seleccion}></img>
-                    </div>
-                    <form >
-                      <label class="btn btn-default">
-                        <img src={Imagen_foto} />
-                        <input type="file" ref={this.fileInput} hidden></input>
-                      </label>
-
-                      <br />
-
+      <div className='dashboard' onMouseEnter={this.funcion}>
+        <div id="mySidemenu" className="sidemenu">
+          <a href="#" className="cerrar" onClick={this.closeNav}>&times;</a>
+          <a href="/foro" >Home</a>
+          {this.state.datos_usuario.map((comentario) => <Mi_perfil id={comentario.Tipo} onClick={this.perfil} />)}
+          <a href="/" >Categorias</a>
+          <a href="/Nuestro_equipo">Nuestro equipo</a>
+          {this.state.datos_usuario.map((usuario) => <Perfil id={usuario.Tipo} algo={usuario.User} />)}
+        </div>
+        <div id="main">
+          <div className="btnclas fixed-top d-flex" id="btn">
+            <button className="btn-open" id="btn_dentro" onClick={this.openNav}>&#9776; </button>
+          </div>
+          <div className='dashboard-app'>
+            <header className='dashboard-toolbar'><a href="#!" className="menu-toggle"><i className="fas fa-bars"></i></a></header>
+            <div className='dashboard-content'>
+              <div className='container' id='container'>
+                <div className='card '>
+                  <div className='card-header '>
+                    <h1>Crear nuevo Post</h1>
+                  </div>
+                  <div className='card-body'>
+                    <form>
+                      <div class="form-group">
+                        <label for="username">Título</label>
+                        <input type="text" class="form-control" id="titulo" aria-describedby="Username" placeholder="Título" />
+                        <small id="Username" class="form-text text-muted">Introduce el nombre del titulo del post</small>
+                      </div>
+                      <br></br>
+                      <div class="form-group">
+                        <label for="username">Categoria</label>
+                        <input type="text" class="form-control" id="categoria" aria-describedby="Username" placeholder="Categoría" />
+                        <small id="Username" class="form-text text-muted">Especifique la categoria de su Post</small>
+                      </div>
+                      <br></br>
+                      <label for="textarea">Post</label>
+                      <div class=" post form-group" id='todo_post'>
+                        <main>
+                        </main>
+                      </div>
+                      <br></br>
                     </form>
-
-                    <button onClick={this.insertar} type="submit">Submit</button>
-                    <div id="tt"></div>
-                  </main>
-
+                    <div id='marco_anadir'>
+                    </div>
+                    <img onClick={this.texto} alt="Insertar texto" id="foto_texto" src={Imagen_texto}></img>
+                    <img onClick={this.imagen} id="foto_paisaje" src={Imagen_foto}></img>
+                    <footer>
+                      <div id='alerta'>{this.state.error}</div>
+                    </footer>
+                    <button onClick={this.subir_post.bind(this, 0)} className="btn btn-success">Crear post</button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      
-
+      </div>
     );
   }
 }
-ReactDOM.render(
-  <Foro />,
-  document.getElementById('root')
-);
+
 export default Foro;

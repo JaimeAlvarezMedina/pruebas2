@@ -135,10 +135,10 @@ class Foro extends React.Component {
             <div className='dashboard' onMouseEnter={this.funcion}>
                 <div id="mySidemenu" className="sidemenu">
                     <a href="#" className="cerrar" onClick={this.closeNav}>&times;</a>
-                    <a href="/app" >Home</a>
+                    <a href="/foro" >Home</a>
                     {this.state.datos_usuario.map((comentario) => <Mi_perfil id={comentario.Tipo} onClick={this.perfil} />)}
-                    <a href="/" >Registrations</a>
-                    <a href="#">Reports</a>
+                    <a href="/" >Categorias</a>
+                    <a href="/Nuestro_equipo">Nuestro equipo</a>
                     {this.state.datos_usuario.map((usuario) => <Perfil id={usuario.Tipo} algo={usuario.User} />)}
                 </div>
                 <div id="main">
@@ -168,7 +168,7 @@ class Foro extends React.Component {
                                                     </div>
                                                     <div class="single_advisor_details_info">
                                                         <h6>Abel</h6>
-                                                        <p class="designation">Ha hecho lo que ha podido</p>
+                                                        <p class="designation">-</p>
                                                     </div>
                                                 </div>
                                             </div>
