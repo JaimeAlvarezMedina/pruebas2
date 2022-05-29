@@ -268,7 +268,7 @@ class Foro extends React.Component {
     recoger_datos() {
         var datos = new FormData();
         datos.append('Creador', localStorage.getItem("Creador"));
-        fetch("http://159.223.172.191/recoger_datos.php", {
+        fetch("http://159.223.172.191/recoger_datos.php",{
             method: "POST",
             body: datos
         })
